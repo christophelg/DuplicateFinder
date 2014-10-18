@@ -27,7 +27,7 @@ import com.google.common.hash.Hashing;
 public class HashCommand implements Command {
 
   @Parameter(description = "The list of directories to hash", required = true)
-  private List<String> files;
+  private List<String> directoryNames;
 
   private List<File> directories;
 
@@ -37,8 +37,8 @@ public class HashCommand implements Command {
   private File databaseLocation;
 
   public void validate() {
-    directories = Lists.newArrayListWithCapacity(files.size());
-    for (String file : files) {
+    directories = Lists.newArrayListWithCapacity(directoryNames.size());
+    for (String file : directoryNames) {
       File directory = new File(file);
       directories.add(directory);
       if (!directory.isDirectory()) {
@@ -125,9 +125,9 @@ public class HashCommand implements Command {
    * This class implements the filter that keeps the files that we want to hash. <br/>
    * We will remove:
    * <ol>
+   * <li>not existing !</li>
    * <li>empty files</li>
    * <li>links</li>
-   * <li>none existing !</li>
    * </ol>
    */
   private static class NotEndWith implements Predicate<String> {
@@ -143,6 +143,7 @@ public class HashCommand implements Command {
     }
 
   }
+
   private static class PerimeterFilter {
     @SuppressWarnings("unchecked")
     private static final Predicate<String> forbiddenSuffice = Predicates.and(new NotEndWith("lnk"),
